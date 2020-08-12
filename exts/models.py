@@ -10,7 +10,7 @@ from flask_restful import Api, Resource, reqparse, marshal, marshal_with, fields
 
 app = Flask(__name__)
 
-app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:root@localhost:3306/goods"
+app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:root@localhost:3306/goods?charset=utf8"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
 #查询时显示原始sql语句
 app.config["SQLALCHEMY_ECHO"] = True
