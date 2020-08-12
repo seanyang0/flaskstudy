@@ -92,4 +92,4 @@ api.add_resource(GoodsResource, '/goods/<int:gid>')
 api.add_resource(GoodsListResource, '/goodsList')
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host='172.17.0.8', port=4000)
