@@ -36,15 +36,6 @@ class goods(db.Model):
     def __repr__(self):
         return '<goods %r>' % self.name
 
-class Goods:
-    def __init__(self, gid, gname, price, status):
-        self.gid = gid
-        self.gname = gname
-        self.price = price
-        self.status = status
-        self.number = 0
-    def __str__(self):
-        return self.gname
 
 
 #步骤
@@ -106,10 +97,10 @@ class GoodsListResource(Resource):
         price = args.get('price')
         number = args.get('number')
         status = args.get('status')
-        goods = Goods(gid, gname, price, status)
+        tmpgood = goods(gid, gname, price, status)
         if number and number > 0:
-            goods.number = number
-        db.session.add_all([goods])
+            tmpgood.number = number
+        db.session.add_all([tmpgood])
         db.session.commit()
         return {'msg': '添加商品成功', 'goods': goods}
 
