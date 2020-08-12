@@ -75,9 +75,7 @@ class GoodsListResource(Resource):
         price = args.get('price')
         number = args.get('number')
         status = args.get('status')
-        tmpgood = goods(gid, name, price, status)
-        if number and number > 0:
-            tmpgood.number = number
+        tmpgood = goods(gid=gid, name=name, price=price, number=number, status=status)
         db.session.add_all([tmpgood])
         db.session.commit()
         return {'msg': '添加商品成功', 'goods': goods}
