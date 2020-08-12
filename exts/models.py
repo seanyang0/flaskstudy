@@ -50,6 +50,24 @@ parser.add_argument('price', type=int, help='请输入商品价格', required=Tr
 parser.add_argument('number', type=int, help='请输入商品数量', location=['form'])
 parser.add_argument('status', type=str, choices=['聚划算商品', '非聚划算商品'], help='必须正确填写状态', required=True, location=['form', 'args'])
 
+goods_fields = {
+    'gid': fields.Integer,
+    'gname': fields.String,
+    'price': fields.Float,
+    'number': fields.Integer,
+    'status': fields.String
+}
+
+goods_obj_fields = {
+    'msg': fields.String,
+    'goods': fields.Nested(goods_fields)
+}
+
+goods_list_fields = {
+    'goodsList': fields.List(fields.Nested(goods_fields))
+}
+
+
 #定义Resource子类
 class GoodsResource(Resource):
     def get(self, gid):
@@ -63,10 +81,12 @@ class GoodsResource(Resource):
 
 class GoodsListResource(Resource):
 
+    @marshal_with(goods_list_fields)
     def get(self):
         goods_list = goods.query.all()
         return {'goodsList': goods_list}
 
+    @marshal_with(goods_obj_fields)
     #商品的添加
     def post(self):
         args = parser.parse_args()
@@ -78,7 +98,7 @@ class GoodsListResource(Resource):
         tmpgood = goods(gid=gid, name=name, price=price, number=number, status=status)
         db.session.add_all([tmpgood])
         db.session.commit()
-        return {'msg': '添加商品成功', 'goods': goods}
+        return {'msg': '添加商品成功', 'goods': tmpgood}
 
 #添加路由
 api.add_resource(GoodsResource, '/goods/<int:gid>')
