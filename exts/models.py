@@ -52,7 +52,7 @@ parser.add_argument('status', type=str, choices=['聚划算商品', '非聚划�
 
 goods_fields = {
     'gid': fields.Integer,
-    'gname': fields.String,
+    'name': fields.String,
     'price': fields.Float,
     'number': fields.Integer,
     'status': fields.String
@@ -86,7 +86,7 @@ class GoodsListResource(Resource):
         goods_list = goods.query.all()
         return {'goodsList': goods_list}
 
-    @marshal_with(goods_obj_fields)
+    # @marshal_with(goods_obj_fields)
     #商品的添加
     def post(self):
         args = parser.parse_args()
@@ -98,7 +98,7 @@ class GoodsListResource(Resource):
         tmpgood = goods(gid=gid, name=name, price=price, number=number, status=status)
         db.session.add_all([tmpgood])
         db.session.commit()
-        return {'msg': '添加商品成功', 'goods': tmpgood}
+        return {'msg': '添加商品成功'}
 
 #添加路由
 api.add_resource(GoodsResource, '/goods/<int:gid>')
