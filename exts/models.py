@@ -5,12 +5,10 @@ import pymysql
 from flask_sqlalchemy import SQLAlchemy
 from flask import  request
 from flask_restful import Api, Resource, reqparse, marshal, marshal_with, fields
-import settings
 
 #dialect+driver://username:password@host:port/database
 
 app = Flask(__name__)
-app.config.from_object(settings)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:root@localhost:3306/goods"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
@@ -38,7 +36,15 @@ class goods(db.Model):
     def __repr__(self):
         return '<goods %r>' % self.name
 
-
+class Goods:
+    def __init__(self, gid, gname, price, status):
+        self.gid = gid
+        self.gname = gname
+        self.price = price
+        self.status = status
+        self.number = 0
+    def __str__(self):
+        return self.gname
 
 
 #步骤
@@ -94,22 +100,23 @@ class GoodsListResource(Resource):
     #商品的添加
     @marshal_with(goods_obj_fields)
     def post(self):
-        pass
-        # args = parser.parse_args()
-        # gid = args.get('gid')
-        # gname = args.get('gname')
-        # price = args.get('price')
-        # number = args.get('number')
-        # status = args.get('status')
-        # goods = Goods(gid, gname, price, status)
-        # if number and number > 0:
-        #     goods.number = number
-        # goods_list.append(goods)
-        # return {'msg': '添加商品成功', 'goods': goods}
+        args = parser.parse_args()
+        gid = args.get('gid')
+        gname = args.get('gname')
+        price = args.get('price')
+        number = args.get('number')
+        status = args.get('status')
+        goods = Goods(gid, gname, price, status)
+        if number and number > 0:
+            goods.number = number
+        db.session.add_all([goods])
+        db.session.commit()
+        return {'msg': '添加商品成功', 'goods': goods}
 
 #添加路由
 api.add_resource(GoodsResource, '/goods/<int:gid>')
 api.add_resource(GoodsListResource, '/goodsList')
 
 if __name__ == '__main__':
+    app.debug = True # 设置调试模式，生产模式的时候要关掉debug
     app.run(host='172.17.0.8', port=4000)
