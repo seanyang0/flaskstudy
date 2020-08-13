@@ -5,6 +5,7 @@ import pymysql
 from flask_sqlalchemy import SQLAlchemy
 from flask import  request
 from flask_restful import Api, Resource, reqparse, marshal, marshal_with, fields
+from sqlalchemy import create_engine
 
 #dialect+driver://username:password@host:port/database
 
@@ -15,6 +16,8 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
 #查询时显示原始sql语句
 app.config["SQLALCHEMY_ECHO"] = True
 db = SQLAlchemy(app)
+engine = create_engine("mysql+pymysql://root:123456@localhost:3306/forum?charset=utf8", echo=True)
+
 
 """
 goods表：
@@ -36,7 +39,16 @@ class goods(db.Model):
     def __repr__(self):
         return '<goods %r>' % self.name
 
+def table_exists(name):
+    ret = engine.dialect.has_table(engine, name)
+    print('Table "{}" exists: {}'.format(name, ret))
+    return ret
 
+def database_is_empty():
+    table_names = SQLAlchemy.inspect(engine).get_table_names()
+    is_empty = table_names == []
+    print('Db is empty: {}'.format(is_empty))
+    return is_empty
 
 #步骤
 # 创建API对象
@@ -89,6 +101,9 @@ class GoodsListResource(Resource):
     # @marshal_with(goods_obj_fields)
     #商品的添加
     def post(self):
+        ret = table_exists('goods')
+        if ret != True:
+            db.create_all()
         args = parser.parse_args()
         gid = args.get('gid')
         name = args.get('name')
