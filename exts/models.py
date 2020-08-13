@@ -16,7 +16,7 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
 #查询时显示原始sql语句
 app.config["SQLALCHEMY_ECHO"] = True
 db = SQLAlchemy(app)
-engine = create_engine("mysql+pymysql://root:123456@localhost:3306/forum?charset=utf8", echo=True)
+engine = create_engine("mysql+pymysql://root:root@localhost:3306/goods?charset=utf8", echo=True)
 
 
 """
